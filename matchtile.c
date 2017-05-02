@@ -7,44 +7,169 @@
 #include "matchtile.h"
 
 //Returns length of array
-#define SIZE_OF_ARRAY(_array) (sizeof(_array) / sizeof(_array[0]))
+#define SIZE_OF_ARRAY(_array) (sizeof(_array) / sizeof(_array[0]))	
 
 
+int getTile(int xcoord, int ycoord, int m, int n, int a[m][n])
+{
+	if((xcoord<0) || (ycoord<0) || (xcoord>29) || (ycoord>29))
+	{
+		return 1111;
+	}
+	else
+	{
+		return a[ycoord][xcoord];
+	}
+}
 
-//Arrays: X & Y Lines
-int groupArrayX[4]={420, 421, 429, 420};
-int groupArrayY[4]={100, 110, 120, 80};
+int setTile(int xcoord, int ycoord, int newTile, int m, int n, int a[m][n])
+{
+	if((xcoord<0) || (ycoord<0) || (xcoord>29) || (ycoord>29))
+	{
+		return 1111;
+	}
+	else
+	{
+		a[ycoord][xcoord]=newTile;
+	}
 	
+	return 0;
+}
+
+int convertRobLoc_MapGlob(int coordRobot)
+{
+	int result;
+	if(coordRobot==-560)
+	{
+		result = 0;
+	}
+	else if(coordRobot==-520)
+	{
+		result = 1;
+	}
+	else if(coordRobot==-480)
+	{
+		result = 2;
+	}
+	else if(coordRobot==-440)
+	{
+		result = 3;
+	}
+	else if(coordRobot==-400)
+	{
+		result = 4;
+	}
+	else if(coordRobot==-360)
+	{
+		result = 5;
+	}
+	else if(coordRobot==-320)
+	{
+		result = 6;
+	}
+	else if(coordRobot==-280)
+	{
+		result = 7;
+	}
+	else if(coordRobot==240)
+	{
+		result = 8;
+	}
+	else if(coordRobot==-200)
+	{
+		result = 9;
+	}
+	else if(coordRobot==-160)
+	{
+		result = 10;
+	}
+	else if(coordRobot==-120)
+	{
+		result = 11;
+	}
+	else if(coordRobot==-80)
+	{
+		result = 12;
+	}
+	else if(coordRobot==-40)
+	{
+		result = 13;
+	}
+	else if(coordRobot==0)
+	{
+		result = 14;
+	}
+	
+	else if(coordRobot==40)
+	{
+		result = 15;
+	}
+	else if(coordRobot==80)
+	{
+		result = 16;
+	}
+	else if(coordRobot==120)
+	{
+		result = 17;
+	}
+	else if(coordRobot==160)
+	{
+		result = 18;
+	}
+	else if(coordRobot==200)
+	{
+		result = 19;
+	}
+	else if(coordRobot==240)
+	{
+		result = 20;
+	}
+	else if(coordRobot==280)
+	{
+		result = 21;
+	}
+	else if(coordRobot==320)
+	{
+		result = 22;
+	}
+	else if(coordRobot==360)
+	{
+		result = 23;
+	}
+	else if(coordRobot==400)
+	{
+		result = 24;
+	}
+	else if(coordRobot==440)
+	{
+		result = 25;
+	}
+	else if(coordRobot==480)
+	{
+		result = 26;
+	}
+	else if(coordRobot==520)
+	{
+		result = 27;
+	}
+	else if(coordRobot==560)
+	{
+		result = 28;
+	}
+	else
+	{
+		result = 1111;
+	}
+	return result;
+}
 
 
-//X lines
-int lineArrayX[30]={-580, -540, -500, -460, -420, -380, -340, -300, -260, -220, -180, -140, -100, -60, -20,
-20, 60, 100, 140, 180, 220, 260, 300, 340, 380, 420, 460, 500, 540, 580};
-//Y lines
-int lineArrayY[16]={-20, 20, 60, 100, 140, 180, 220, 260, 300, 340, 380, 420, 460, 500, 540, 580};
-
-//Constants
-int8_t maxAvgDist;
-uint8_t noPoints;
-uint8_t noXlines;
-uint8_t noYlines;
-
-//Test Variables
-int testX;
-int testY;
-int matchtestX;
-int matchtestY;
-int matchtestXnext;
-int matchtestYnext;
-int testArrayMax;
-int testArrayMin;
-int testNoCorner;
 
 
 //Assigning values to the constants
 void init_const()
 {
-	maxAvgDist = 15;
+	maxAvgDist = 40;
 	noPoints = SIZE_OF_ARRAY(groupArrayX);
 	noXlines = SIZE_OF_ARRAY(lineArrayX);
 	noYlines = SIZE_OF_ARRAY(lineArrayY);
@@ -228,7 +353,7 @@ bool noCorner(int x[], int y[])
 	int maxDiffX = abs(abs(maxX)-abs(minX));
 	int maxDiffY = abs(abs(maxY)-abs(minY));
 	
-	if((maxDiffX > maxDiffAllowed) & (maxDiffY > maxDiffAllowed))
+	if((maxDiffX >= maxDiffAllowed) & (maxDiffY > maxDiffAllowed))
 	{
 		return false;
 	}
@@ -251,7 +376,7 @@ bool xLine(int x[], int y[])
 	int maxDiffX = abs(abs(maxX)-abs(minX));
 	int maxDiffY = abs(abs(maxY)-abs(minY));
 	
-	if((maxDiffX < maxDiffAllowed) & (maxDiffY > maxDiffAllowed))
+	if((maxDiffX <= maxDiffAllowed) & (maxDiffY > maxDiffAllowed))
 	{
 		return true;
 	}
@@ -266,19 +391,116 @@ bool xLine(int x[], int y[])
 	
 }
 
-int matchTile(int x[],int y[])
+
+//Returns the x tile coordinate. If it returns 3, the data window is bad and no tile should be added to the map
+int matchTileX(int x[],int y[])
 {
+	int coordX;
+	
+	int bestMatchX = matchX(x);
+	int nextBestMatchX = matchXnext(x,bestMatchX);
+	int avgBestX = (bestMatchX+nextBestMatchX)/2;
+	
 	if ((xLine(x,y)) & (noCorner(x,y)))
 	{
-		return 1;
+		//Put tile on the correct side of the detected line
+		if(robPosX<bestMatchX)
+		{
+			coordX = bestMatchX + 20; 
+		}
+		else if(robPosX>bestMatchX)
+		{
+			coordX = bestMatchX - 20;
+		}
+		else
+		{
+			return 1; //Shouldn't happen #1
+		}
 	}
 	else if((!xLine(x,y)) & (noCorner(x,y)))
 	{
-		return 2;
+		if(avgBestX > bestMatchX)
+		{
+			coordX = bestMatchX + 20;
+		}
+		else if(avgBestX < bestMatchX)
+		{
+			coordX = bestMatchX - 20;
+		}
+		else
+		{
+			return 2; //Shouldn't happen #2
+		}
 	}
 	else
 	{
-		return 3;
+		return 3; //This can happen: bad data, corner etc. 
+	}
+	
+	return coordX;
+}
+
+//Returns the y tile coordinate. If it returns 3, the data window is bad and no tile should be added to the map
+int matchTileY(int x[],int y[])
+{
+	int coordY;
+	
+	int bestMatchY = matchY(y);
+	int nextBestMatchY = matchYnext(y,bestMatchY);
+	int avgBestY = (bestMatchY+nextBestMatchY)/2;
+	
+	if ((xLine(x,y)) & (noCorner(x,y)))
+	{
+		//Put tile on the correct side of the detected line
+		if(avgBestY > bestMatchY)
+		{
+			coordY = bestMatchY + 20;
+		}
+		else if(avgBestY < bestMatchY)
+		{
+			coordY = bestMatchY - 20;
+		}
+		else
+		{
+			return 2; //Shouldn't happen #2
+		}
+	}
+	else if((!xLine(x,y)) & (noCorner(x,y)))
+	{
+		if(robPosY<bestMatchY)
+		{
+			coordY = bestMatchY + 20;
+		}
+		else if(robPosY>bestMatchY)
+		{
+			coordY = bestMatchY - 20;
+		}
+		else
+		{
+			return 1; //Shouldn't happen #1
+		}
+	}
+	else
+	{
+		return 3; //Shouldn't happen #3. Bad data, corner etc.
+	}
+	
+	return coordY;
+}
+
+void updateMap(int x[],int y[], int m, int n, int a[m][n])
+{
+	int xTileRob=matchTileX(x,y);
+	int yTileRob=matchTileY(x,y);
+	
+	if((xTileRob!=3)||(yTileRob!=3)||(xTileRob!=2)||(yTileRob!=2)||(xTileRob!=1)||(yTileRob!=1))
+	{
+		int xTileGlob=convertRobLoc_MapGlob(xTileRob);
+		int yTileGlob=convertRobLoc_MapGlob(yTileRob);
+		
+		//Add +1 for each time the tile is detected
+		int newVal=getTile(xTileGlob,yTileGlob,29,29,a) + 1;
+		setTile(xTileGlob,yTileGlob,newVal,29,29,a);	
 	}
 }
 
@@ -286,9 +508,9 @@ int matchTile(int x[],int y[])
 int main()
 {
 	init_const();
-	
-	testX = avgArray(groupArrayX,noPoints);
-	testY = avgArray(groupArrayY,noPoints);
+	/*
+	AvgTestX = avgArray(groupArrayX,noPoints);
+	AvgTestY = avgArray(groupArrayY,noPoints);
 	
 	matchtestX=matchX(groupArrayX); 
 	matchtestY=matchY(groupArrayY);
@@ -299,6 +521,19 @@ int main()
 	testArrayMax=max_array(groupArrayX,noPoints);
 	testArrayMin=min_array(groupArrayX,noPoints);
 	
-	testNoCorner=matchTile(groupArrayX,groupArrayY);
+	xTile=matchTileX(groupArrayX,groupArrayY);
+	yTile=matchTileY(groupArrayX,groupArrayY);*/
+	
+	
+	//testMapArrayTileSet = setTile(14,14,1,29,29,mapArray);
+	//testMapArrayTileGet = getTile(14,14,29,29,mapArray);
+	/*
+	updateMap(groupArrayX,groupArrayY,29,29,mapArray);
+	updateMap(groupArrayX,groupArrayY,29,29,mapArray);
+	*/
+	updateMap(groupArrayX,groupArrayY,29,29,mapArray);
+	updateMap(groupArrayX,groupArrayY,29,29,mapArray);
+	
+	testMapArrayTileGet = getTile(26,22,29,29,mapArray);
 	
 }
